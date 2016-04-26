@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Exchange Ticker</title>
+		<meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <meta name="description" content="MongoDb+PubNub">
+	    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,400italic' rel='stylesheet' type='text/css'>
+	    <link href="css/style.css" rel="stylesheet" type="text/css">
+	    <script type="text/javascript" src="js/lib/jquery-2.2.0.min.js"></script>
+	    <script type="text/javascript" src="js/lib/jquery.sparkline.min.js"></script>
+	    <script type="text/javascript" src="js/lib/pubnub-3.13.0.min.js"></script>
+	    <script type="text/javascript" src="js/index.js"></script>
+	</head>
+	
+	<body>
+		<div id="exchangeTickerdashboard" class="section group boundary">
+
+			<div class='section group header'>
+				<div class='col header_span_1'>Exchange<br>Ticker</div>
+			</div>
+
+			<div class='section group content'>
+
+	            <div class='section group tickercounter'>
+	                <div class='col price'>
+	                    <span class='indexval'>USD => EUR</span><br>
+	                    <span id='EUR' class='priceval'>__.__</span>
+	                </div>
+	                <div class='col delta'><div id='EUR-dir'></div><span id='EUR-delta'>_._</span></div>
+	                <div class='col chart'>
+	                    <button id = "button" type="button" data-index='EUR'>Trend</button>
+	                    <span class='lastupdatelabel'>Last Update</span><br>
+	                    <span id='EUR-time'>__:__:__</span>
+	                </div>
+	            </div>
+
+	            <div class='section group tickercounter'>
+	                <div class='col price'>
+	                    <span class='indexval'>USD => AUD</span><br>
+	                    <span id='AUD' class='priceval'>__.__</span>
+	                </div>
+	                <div class='col delta'><div id='AUD-dir'></div><span id='AUD-delta'>_._</span></div>
+	                <div class='col chart'>
+	                    <button id = "button" type="button" data-index='AUD'>Trend</button>
+	                    <span class='lastupdatelabel'>Last Update</span><br>
+	                    <span id='AUD-time'>__:__:__</span>
+	                </div>
+	            </div>
+
+	            <div class='section group tickercounter'>
+	                <div class='col price'>
+	                    <span class='indexval'>USD => CNY</span><br>
+	                    <span id='CNY' class='priceval'>__.__</span>
+	                </div>
+	                <div class='col delta'><div id='CNY-dir'></div><span id='CNY-delta'>_._</span></div>
+	                <div class='col chart'>
+	                    <button id = "button" type="button" data-index='CNY'>Trend</button>
+	                    <span class='lastupdatelabel'>Last Update</span><br>
+	                    <span id='CNY-time'>__:__:__</span>
+	                </div>
+	            </div>
+
+	            <div class='section group tickercounter'>
+	                <div class='col price'>
+	                    <span class='indexval'>USD => INR</span><br>
+	                    <span id='INR' class='priceval'>__.__</span>
+	                </div>
+	                <div class='col delta'><div id='INR-dir' ></div><span id='INR-delta'>_._</span></div>
+	                <div class='col chart'>
+	                    <button id = "button" type="button" data-index='INR'>Trend</button>
+	                    <span class='lastupdatelabel'>Last Update</span><br>
+	                    <span id='INR-time'>__:__:__</span>
+	                </div>
+	            </div>
+
+	        </div>
+ 		</div>
+	</body>
+</html>
