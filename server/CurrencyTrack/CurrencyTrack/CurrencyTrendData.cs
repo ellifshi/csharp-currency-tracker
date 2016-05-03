@@ -8,9 +8,9 @@ namespace CurrencyTrack
 {
     public class CurrencyTrendData
     {
-        public int requestType;
+        public int responseType = 1;
         public string name = "";
-        public ArrayList value;// = "";
+        public List<decimal> value;// = "";
         public int time;
     }
 

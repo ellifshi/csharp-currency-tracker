@@ -124,7 +124,7 @@ namespace CurrencyTrack
 
             if (arrayCount >= 1)
             {
-                isSameValue = Global.ArrayDictMap[currencyLabel][arrayCount - 1].ToString() == currencyObj[currencyLabel].ToString();
+                isSameValue = Global.ArrayDictMap[currencyLabel][arrayCount - 1] == currencyObj[currencyLabel];
             }
 
             if (!isSameValue)
@@ -135,14 +135,36 @@ namespace CurrencyTrack
                     Global.ArrayDictMap[currencyLabel].RemoveAt(0);
                 }
 
-                Global.ArrayDictMap[currencyLabel].Add(currencyObj[currencyLabel]);
-
+                
                 CurrencyData currencyDataPublish = new CurrencyData();
 
-                currencyDataPublish.requestType = 0;
                 currencyDataPublish.name = currencyLabel.Substring(3);
                 currencyDataPublish.value = currencyObj[currencyLabel].ToString();
                 currencyDataPublish.time = TimeStamp;
+
+                try {
+
+                    if (currencyObj[currencyLabel] > Global.ArrayDictMap[currencyLabel][arrayCount - 1])
+                    {
+                        currencyDataPublish.direction = "+";
+                    }
+                    else
+                    {
+                        currencyDataPublish.direction = "-";
+                    }
+
+                    currencyDataPublish.magnitude = Math.Abs(currencyObj[currencyLabel] - Global.ArrayDictMap[currencyLabel][arrayCount - 1]);
+
+                }
+                catch(IndexOutOfRangeException e)
+                {
+                    currencyDataPublish.direction = "+";
+                    currencyDataPublish.magnitude = currencyObj[currencyLabel];
+                }
+
+                
+
+                Global.ArrayDictMap[currencyLabel].Add(currencyObj[currencyLabel]);
 
 
 

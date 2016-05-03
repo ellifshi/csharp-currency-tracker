@@ -7,9 +7,11 @@ namespace CurrencyTrack
 {
     public class CurrencyData
     {
-        public int requestType;
+        public int responseType = 0;
         public string name = "";
         public string value = "";
+        public string direction = "";
+        public decimal magnitude ;
         public int time;
     }//End of CurrencyData
 
