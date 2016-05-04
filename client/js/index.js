@@ -107,7 +107,7 @@ var displayDeltaDirectionArrow = function(p_name,p_delta){
 
 $(document ).ready(function() {
 	pubnub.subscribe({
-	    channel: 'exchangedata1',
+	    channel: 'exchangedata',
 	    message: updatePrice
 	});
 
