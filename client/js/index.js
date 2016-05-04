@@ -21,7 +21,6 @@ var trend_graph = {
     'INR'   : null
 };
 
-var changeValue;
 
 //YOUR PUBNUB KEYS - Replace the publish_key and subscribe_key below with your own keys
 var pubnub = PUBNUB.init({
@@ -47,16 +46,15 @@ var updatePrice = function(p_rcvmessage){
     if(p_message.responseType == 0){
         if(counterDisplayState[p_message.name] == true){
 
-            $('#' + p_message['name']).html(p_message['value'])
-            changeValue = p_message['value']
-            valueChange(p_message['name'],p_message['direction'],p_message['magnitude'])
+            $('#' + p_message['name']).html(p_message['value'].toFixed(2))
+            valueChange(p_message['name'],p_message['direction'],p_message['magnitude'].toFixed(2))
             var date = new Date(p_message['time'] * 1000);
             var timeString = date.getUTCHours().toString() + ":" + date.getUTCMinutes().toString() + ":" + date.getUTCSeconds().toString();
             $('#' + p_message['name'] + '-time' ).html(timeString);
         }
         else{
             if(trend_graph[p_message.name] != null){
-                valueChange(p_message.name,p_message['direction'],p_message['magnitude'])
+                valueChange(p_message.name,p_message['direction'],p_message['magnitude'].toFixed(2))
                 trend_graph[p_message.name].shift();
                 trend_graph[p_message.name].push(p_message.value);
                 $('#'+p_message.name).sparkline(trend_graph[p_message.name])
@@ -72,7 +70,7 @@ var updatePrice = function(p_rcvmessage){
             trend_graph[p_message['name']] = p_message['value'];
             $('#'+p_message.name).sparkline(trend_graph[p_message.name])
             $('[data-index='+p_message.name+']').text(BUTTON_TXT_COUNTER);
-            valueChange(p_message['name'],p_message['direction'],p_message['magnitude'])
+            valueChange(p_message['name'],p_message['direction'],p_message['magnitude'].toFixed(2))
             var date = new Date(p_message['time'] * 1000);
             var timeString = date.getUTCHours().toString() + ":" + date.getUTCMinutes().toString() + ":" + date.getUTCSeconds().toString();
             $('#' + p_message['name'] + '-time' ).html(timeString);
