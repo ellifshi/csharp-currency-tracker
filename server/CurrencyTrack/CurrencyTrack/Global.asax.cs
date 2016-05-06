@@ -7,7 +7,7 @@ using System.Web.Security;
 using System.Web.SessionState;
 using PubNubMessaging.Core;// Exclusively for Pubnub
 using Newtonsoft.Json;
-using System.Web.Script.Serialization;//JSON Deserialization
+
 
 namespace CurrencyTrack
 {
@@ -15,12 +15,11 @@ namespace CurrencyTrack
     {
 
         const string key_curr = "";
-        const string strCHANNELNAME = "exchangedata";
-        const string strCHANNELNAME_Subscribe = "appRequestChannel";
-        public static Pubnub _pubnub;
-        const string strPUBLISH_KEY = "pub-c-913ab39c-d613-44b3-8622-2e56b8f5ea6d";
-        const string strSUBSCRIBE_KEY = "sub-c-8ad89b4e-a95e-11e5-a65d-02ee2ddab7fe";
+        
+        const string respChannel = "exchangedata";
+        const string reqChannel  = "appRequestChannel";
 
+        public static Pubnub _pubnub;
         
         public static string strDispDataError = "";// globally declaring strDispDataError for Error identification received from currencylayer site
 
@@ -47,7 +46,8 @@ namespace CurrencyTrack
 
         void PNInit()
         {
-            _pubnub = new Pubnub(strPUBLISH_KEY, strSUBSCRIBE_KEY);
+
+            _pubnub = new Pubnub(System.Web.Configuration.WebConfigurationManager.AppSettings["PNPubKey"], System.Web.Configuration.WebConfigurationManager.AppSettings["PNSubKey"]);
 
             /* TEST DATA
             arrUSDEUR.Add(1.345);
@@ -64,7 +64,7 @@ namespace CurrencyTrack
         void Subscribe()
         {
             _pubnub.Subscribe<string>(
-             strCHANNELNAME_Subscribe,
+             reqChannel,
              DisplaySubscribeReturnMessage,
              DisplayConnectStatusMessage,
              DisplayErrorMessage);
@@ -76,24 +76,37 @@ namespace CurrencyTrack
         /// <param name="result"></param>
         void DisplaySubscribeReturnMessage(string result)
         {
-            var jss = new JavaScriptSerializer();
-            var dict = jss.Deserialize<dynamic>(result);//[0]={"name":"EUR"},[1]=14582114931652548,[2]=trendRequestChannel
-            var name_Json = dict[0];//{name:"EUR"}
-            var curr_name = jss.Deserialize<dynamic>(name_Json);//{"name":"EUR"}
-            string key_curr = curr_name["name"];//"EUR"
+            
 
-            int reqType = curr_name["requestType"];
-
-            if(reqType == 1)
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
-                PublishTrend(key_curr);
-            }
-            else
-            {
-                PublishCounter(key_curr);
-            }
+                //Console.WriteLine("ReceivedMessageCallbackWhenSubscribed -> result = " + result);
+                List<object> deserializedMessage = _pubnub.JsonPluggableLibrary.DeserializeToListOfObject(result);
+                if (deserializedMessage != null && deserializedMessage.Count > 0)
+                {
+                    object subscribedObject = (object)deserializedMessage[0];
 
-            PublishTrend(key_curr);
+                    AppRequest newReq = new AppRequest();
+                    
+                    //string curr = JsonConvert.DeserializeObject(subscribedObject);
+                    if (subscribedObject != null)
+                    {
+                        JsonConvert.PopulateObject(subscribedObject.ToString(), newReq);
+
+                        if (newReq.requestType == 1)
+                        {
+                            PublishTrend(newReq.name);
+                        }
+                        else
+                        {
+                            PublishCounter(newReq.name);
+                        }
+
+                    }
+                }
+            }
+            
+            
         }// End of DisplaySubscribeReturnMessage
 
         /// <summary>
@@ -106,6 +119,10 @@ namespace CurrencyTrack
             Console.WriteLine(result);
         }//End of DisplayConnectStatusMessage
 
+        /// <summary>
+        /// Publish Trend data in response to app request = 1
+        /// </summary>
+        /// <param name="pCurr">Currency Name</param>
         void PublishTrend(string pCurr)
         {
             string trendJSON = string.Empty;
@@ -119,17 +136,23 @@ namespace CurrencyTrack
 
             trendJSON = JsonConvert.SerializeObject(currencyDataPublish); 
             
-            _pubnub.Publish<string>(strCHANNELNAME, trendJSON, DisplayReturnMessage, DisplayErrorMessage);
+            _pubnub.Publish<string>(respChannel, trendJSON, DisplayReturnMessage, DisplayErrorMessage);
 
 
         }//End of PublishTrend
+
+
+        /// <summary>
+        /// Publish Latest Counter data in response to app request = 0
+        /// </summary>
+        /// <param name="pCurr">Currency Name</param>
 
         void PublishCounter(string pCurr)
         {
             string trendJSON = string.Empty;
             string currKey = "USD" + pCurr;
 
-            int arrayCount = Global.ArrayDictMap[pCurr].Count;
+            int arrayCount = Global.ArrayDictMap[currKey].Count;
 
             if (arrayCount > 0)
             {
@@ -137,13 +160,13 @@ namespace CurrencyTrack
                 CurrencyData currencyDataPublish = new CurrencyData();
 
                 currencyDataPublish.name = pCurr;
-                currencyDataPublish.value = ArrayDictMap[currKey].ToString();
+                currencyDataPublish.value = ArrayDictMap[currKey][arrayCount - 1].ToString();
                 currencyDataPublish.time = LastTimeStamp;
 
                 try
                 {
 
-                    if (Global.ArrayDictMap[pCurr][arrayCount - 1] > Global.ArrayDictMap[pCurr][arrayCount - 2])
+                    if (Global.ArrayDictMap[currKey][arrayCount - 1] > Global.ArrayDictMap[currKey][arrayCount - 2])
                     {
                         currencyDataPublish.direction = "+";
                     }
@@ -152,19 +175,22 @@ namespace CurrencyTrack
                         currencyDataPublish.direction = "-";
                     }
 
-                    currencyDataPublish.magnitude = Math.Abs(Global.ArrayDictMap[pCurr][arrayCount - 1] - Global.ArrayDictMap[pCurr][arrayCount - 2]);
+                    currencyDataPublish.magnitude = Math.Abs(Global.ArrayDictMap[currKey][arrayCount - 1] - Global.ArrayDictMap[currKey][arrayCount - 2]);
 
                 }
-                catch (IndexOutOfRangeException e)
+                catch (ArgumentOutOfRangeException e)
                 {
+                    Console.WriteLine(e.ToString());
+                    Console.WriteLine("Can be ignored if list has one or less elements");
+
                     currencyDataPublish.direction = "+";
-                    currencyDataPublish.magnitude = Global.ArrayDictMap[pCurr][arrayCount - 1];
+                    currencyDataPublish.magnitude = Global.ArrayDictMap[currKey][arrayCount - 1];
                 }
 
 
                 trendJSON = JsonConvert.SerializeObject(currencyDataPublish);
 
-                _pubnub.Publish<string>(strCHANNELNAME, trendJSON, DisplayReturnMessage, DisplayErrorMessage);
+                _pubnub.Publish<string>(respChannel, trendJSON, DisplayReturnMessage, DisplayErrorMessage);
 
 
             }

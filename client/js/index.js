@@ -47,19 +47,19 @@ var updatePrice = function(p_rcvmessage){
         if(counterDisplayState[p_message.name] == true){
 
             $('#' + p_message['name']).html(parseFloat(p_message['value']).toFixed(2))
-            valueChange(p_message['name'],p_message['direction'],parseFloat(p_message['magnitude']).toFixed(6))
+            valueChange(p_message['name'],p_message['direction'],parseFloat(p_message['magnitude']).toFixed(5))
             var date = new Date(p_message['time'] * 1000);
-            var timeString = date.getUTCHours().toString() + ":" + date.getUTCMinutes().toString() + ":" + date.getUTCSeconds().toString();
+            var timeString = date.toLocaleTimeString();
             $('#' + p_message['name'] + '-time' ).html(timeString);
         }
         else{
             if(trend_graph[p_message.name] != null){
-                valueChange(p_message.name,p_message['direction'],parseFloat(p_message['magnitude']).toFixed(6))
+                valueChange(p_message.name,p_message['direction'],parseFloat(p_message['magnitude']).toFixed(5))
                 trend_graph[p_message.name].shift();
                 trend_graph[p_message.name].push(p_message.value);
                 $('#'+p_message.name).sparkline(trend_graph[p_message.name])
                 var date = new Date(p_message['time'] * 1000);
-                var timeString = date.getUTCHours().toString() + ":" + date.getUTCMinutes().toString() + ":" + date.getUTCSeconds().toString();
+                var timeString = date.toLocaleTimeString();
                 $('#' + p_message['name'] + '-time' ).html(timeString);
                 $('[data-index='+p_message.name+']').text(BUTTON_TXT_COUNTER);
             }
@@ -70,11 +70,7 @@ var updatePrice = function(p_rcvmessage){
             trend_graph[p_message['name']] = p_message['value'];
             $('#'+p_message.name).sparkline(trend_graph[p_message.name])
             $('[data-index='+p_message.name+']').text(BUTTON_TXT_COUNTER);
-            valueChange(p_message['name'],p_message['direction'],parseFloat(p_message['magnitude']).toFixed(6))
-            var date = new Date(p_message['time'] * 1000);
-            var timeString = date.getUTCHours().toString() + ":" + date.getUTCMinutes().toString() + ":" + date.getUTCSeconds().toString();
-            $('#' + p_message['name'] + '-time' ).html(timeString);
-            $('[data-index='+p_message.name+']').text(BUTTON_TXT_COUNTER);
+            
         }
     }
 };

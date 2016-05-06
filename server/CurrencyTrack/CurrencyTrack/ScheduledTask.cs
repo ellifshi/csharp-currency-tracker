@@ -18,10 +18,6 @@ namespace CurrencyTrack
 
         
         const string strCHANNELNAME = "exchangedata";
-        const string strCHANNELNAME_Subscribe = "trendRequestChannel";
-        const string strCHANNELNAMESubscribe = "trendRequestChannel";
-        const string strPUBLISH_KEY = "pub-c-913ab39c-d613-44b3-8622-2e56b8f5ea6d";
-        const string strSUBSCRIBE_KEY = "sub-c-8ad89b4e-a95e-11e5-a65d-02ee2ddab7fe";
         
 
         // Active Access_key
@@ -33,10 +29,9 @@ namespace CurrencyTrack
         
 
         /// <summary>
-        /// json_data is here broken into parts and filled up in respective arrays USDEUR, USDAUD, USDCNY, USDINR. 
-        /// The array elements are displayed later on inside strDispData
+        /// Response from CUrrency Layer is here broken into parts and filled up in respective Lists USDEUR, USDAUD, USDCNY, USDINR. 
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="context">Job Scheduler Context</param>
 
         public void Execute(IJobExecutionContext context)
         {
@@ -73,6 +68,10 @@ namespace CurrencyTrack
                 
                 
             }//End try
+            catch(WebException we)
+            {
+                clsLogWriter.writeEx(we, this);
+            }
             catch (Exception ex)
             {
                 clsLogWriter.writeEx(ex, this); 
@@ -101,17 +100,15 @@ namespace CurrencyTrack
             }// End using
         }// End download_serialized_json_data
 
-        /// <summary>
-        /// Method where Publish key & Subscribe keys are declared. It is the method from where the Pubnub channel is established.
-        /// </summary>
 
-            /*
-        void Init1()
-        {
-            _pubnub = new Pubnub(strPUBLISH_KEY, strSUBSCRIBE_KEY);
-        }// End of Init1()
-        */
-        
+        /// <summary>
+        /// This function is called everytime a new currency value is received.
+        /// It stores and publishes the new value to all clients. 
+        /// </summary>
+        /// <param name="currencyLabel">Currency Name</param>
+        /// <param name="currencyObj">Currency Data received from CurrencyLayer.com API</param>
+        /// <param name="TimeStamp">Latest TimeStamp of the new currency data</param>
+        /// <returns></returns>
 
         void StoreAndPublishCurrencyData(string currencyLabel, Dictionary<string, decimal> currencyObj , int TimeStamp )
         {
@@ -156,8 +153,11 @@ namespace CurrencyTrack
                     currencyDataPublish.magnitude = Math.Abs(currencyObj[currencyLabel] - Global.ArrayDictMap[currencyLabel][arrayCount - 1]);
 
                 }
-                catch(IndexOutOfRangeException e)
+                catch(ArgumentOutOfRangeException e)
                 {
+                    Console.WriteLine(e.ToString());
+                    Console.WriteLine("Can be ignored if list has one or less elements");
+
                     currencyDataPublish.direction = "+";
                     currencyDataPublish.magnitude = currencyObj[currencyLabel];
                 }
@@ -178,16 +178,14 @@ namespace CurrencyTrack
         }
 
         /// <summary>
-        /// Callback method captures the response in JSON string format for all operations. Server returns currency data via this method.
+        /// Callback method for publish status messages
         /// </summary>
-        /// <param name="result">Parameter is Response</param>
+        /// <param name="result">Published message</param>
 
-        void DisplayReturnMessage(string result)
+        public static void DisplayReturnMessage(string result)
         {
-
             Console.WriteLine("PUBLISH STATUS CALLBACK");
             Console.WriteLine(result);
-
         }// End of DisplayReturnMessage
 
         /// <summary>
@@ -195,69 +193,14 @@ namespace CurrencyTrack
         /// </summary>
         /// <param name="pubnubError">Returns the error message if it fails to get back any result after hitting the URL</param>
 
-        void DisplayErrorMessage(PubnubClientError pubnubError)
+        public static void DisplayErrorMessage(PubnubClientError pubnubError)
         {
             Console.WriteLine(pubnubError.StatusCode);
         }// End of DisplayErrorMessage
 
-        /*Subscribe from client end starts*/
-        void Subscribe()
-        {
-            Global._pubnub.Subscribe<string>(
-             strCHANNELNAME_Subscribe,
-             DisplaySubscribeReturnMessage,
-             DisplayConnectStatusMessage,
-             DisplayErrorMessage);
 
-            //Global.PublishTrend();
-            //PublishTrend(); 
-        }//End of Subscribe
-        /*Subscribe from client end ends*/
 
-        /// <summary>
-        /// Callback method captures the response in JSON string format for all operations
-        /// </summary>
-        /// <param name="result"></param>
-        void DisplaySubscribeReturnMessage(string result)
-        {
-            var jss = new JavaScriptSerializer();
 
-            var dict = jss.Deserialize<dynamic>(result);//[0]={"name":"EUR"},[1]=14582114931652548,[2]=trendRequestChannel
-
-            var name_Json = dict[0];//{name:"EUR"}
-
-            var curr_name = jss.Deserialize<dynamic>(name_Json);//{"name":"EUR"}
-
-            var key_curr = curr_name["name"];//"EUR"
-
-            //Console.WriteLine("SUBSCRIBE REGULAR CALLBACK:");
-            //Console.WriteLine(result);
-            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
-            {
-                List<object> deserializedMessage = Global._pubnub.JsonPluggableLibrary.DeserializeToListOfObject(result);
-                if (deserializedMessage != null && deserializedMessage.Count > 0)
-                {
-                    object subscribedObject = (object)deserializedMessage[0];
-                    if (subscribedObject != null)
-                    {
-                        //IF CUSTOM OBJECT IS EXCEPTED, YOU CAN CAST THIS OBJECT TO YOUR CUSTOM CLASS TYPE
-                        string resultActualMessage = Global._pubnub.JsonPluggableLibrary.SerializeToJsonString(subscribedObject);
-                    }//End if
-                }//End if
-            }//End if
-        }// End of DisplaySubscribeReturnMessage
-
-        /// <summary>
-        /// Callback method to provide the connect status of Subscribe call
-        /// </summary>
-        /// <param name="result"></param>
-        static void DisplayConnectStatusMessage(string result)
-        {
-            Console.WriteLine("ConnectStatus:");
-            Console.WriteLine(result);
-        }//End of DisplayConnectStatusMessage
-
-        
     }// End of Schedule_Task class
 
 }
