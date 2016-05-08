@@ -8,15 +8,12 @@ using Quartz;
 using System.Net;
 using System.Collections;
 using Newtonsoft.Json.Serialization;// For Schedule Task
-using System.Web.Script.Serialization;//JSON Deserialization
 
 namespace CurrencyTrack
 {
     public class ScheduledTask : IJob
     {
-        const string key_curr = "";
-
-        
+     
         const string strCHANNELNAME = "exchangedata";
         
 

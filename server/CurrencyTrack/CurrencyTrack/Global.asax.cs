@@ -48,15 +48,7 @@ namespace CurrencyTrack
         {
 
             _pubnub = new Pubnub(System.Web.Configuration.WebConfigurationManager.AppSettings["PNPubKey"], System.Web.Configuration.WebConfigurationManager.AppSettings["PNSubKey"]);
-
-            /* TEST DATA
-            arrUSDEUR.Add(1.345);
-            arrUSDEUR.Add(2.345);
-            arrUSDEUR.Add(3.345);
-            arrUSDEUR.Add(4.345);
-            arrUSDEUR.Add(5.345);
-            arrUSDEUR.Add(6.345);
-            */
+            
 
         }// End of Init()
 
