@@ -15,10 +15,10 @@ namespace CurrencyTrack
     {
      
         const string strCHANNELNAME = "exchangedata";
-        
-
+     //   1a142e188a7b4a43e404eee3bbf52378
+     //   8eb5b8dcc5334a028e4ef3b746c97f3d
         // Active Access_key
-        const string url = "http://apilayer.net/api/live?access_key=1a142e188a7b4a43e404eee3bbf52378&currencies=EUR,AUD,CNY,INR&source=USD&format=1"; // URL of currencylayer site
+        const string url = "http://apilayer.net/api/live?access_key=8eb5b8dcc5334a028e4ef3b746c97f3d&currencies=EUR,AUD,CNY,INR&source=USD&format=1"; // URL of currencylayer site
 
         // Not Active Access_key (only to check whether the code can handle Error thrown by Currencylayer site)
         // const string url = "http://apilayer.net/api/live?access_key=819f113d4e79e8d442d1a580d3c3bf80&currencies=EUR,AUD,CNY,INR&source=USD&format=1"; // URL of currencylayer site

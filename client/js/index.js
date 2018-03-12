@@ -1,8 +1,17 @@
 //PUB SUB KEYS
-var pub_key = "pub-c-913ab39c-d613-44b3-8622-2e56b8f5ea6d";
-var sub_key = "sub-c-8ad89b4e-a95e-11e5-a65d-02ee2ddab7fe";
+var pub_key = "pub-c-da1fafc6-db00-4c37-bca5-6e6460b2a73c";
+var sub_key = "sub-c-800ec8ac-224a-11e8-bb29-5a43d096f02f";
+
+
+
+
+
+
+
+
 
 //Constants
+var BUTTON_TXT_TREND = 'Trend';
 var BUTTON_TXT_TREND = 'Trend';
 var BUTTON_TXT_COUNTER = 'Counter';
 

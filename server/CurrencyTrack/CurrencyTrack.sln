@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyTrack", "CurrencyTrack\CurrencyTrack.csproj", "{05A131D6-1C2F-4BBC-9BA2-AE7C32FE960A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyTrack BL", "CurrencyTrack\CurrencyTrack BL.csproj", "{05A131D6-1C2F-4BBC-9BA2-AE7C32FE960A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyTrack UI", "ConsoleApplication1\CurrencyTrack UI.csproj", "{18760DBA-0302-4B12-9F6E-20407BF9E36F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{05A131D6-1C2F-4BBC-9BA2-AE7C32FE960A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05A131D6-1C2F-4BBC-9BA2-AE7C32FE960A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05A131D6-1C2F-4BBC-9BA2-AE7C32FE960A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18760DBA-0302-4B12-9F6E-20407BF9E36F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18760DBA-0302-4B12-9F6E-20407BF9E36F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18760DBA-0302-4B12-9F6E-20407BF9E36F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18760DBA-0302-4B12-9F6E-20407BF9E36F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
